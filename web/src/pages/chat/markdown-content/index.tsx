@@ -4,7 +4,7 @@ import { IReference, IReferenceChunk } from '@/interfaces/database/chat';
 import { getExtension } from '@/utils/document-util';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Button, Flex, Popover } from 'antd';
-import DOMPurify from 'dompurify';
+// import DOMPurify from 'dompurify';
 import { useCallback, useEffect, useMemo } from 'react';
 import Markdown from 'react-markdown';
 import reactStringReplace from 'react-string-replace';
@@ -127,12 +127,16 @@ const MarkdownContent = ({
             </Popover>
           )}
           <div className={'space-y-2 max-w-[40vw]'}>
-            <div
+            {/* <div
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(chunkItem?.content ?? ''),
               }}
               className={classNames(styles.chunkContentText)}
-            ></div>
+            ></div> */}
+            <div className={styles.chunkContentText}>
+              {chunkItem?.content ?? ''}
+            </div>
+
             {documentId && (
               <Flex gap={'small'}>
                 {fileThumbnail ? (
