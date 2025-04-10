@@ -119,16 +119,14 @@ const MessageItem = ({
           <Flex vertical gap={8} flex={1}>
             <Space>
               {isAssistant ? (
-                index !== 0 && (
-                  <AssistantGroupButton
-                    messageId={item.id}
-                    content={item.content}
-                    prompt={item.prompt}
-                    showLikeButton={showLikeButton}
-                    audioBinary={item.audio_binary}
-                    showLoudspeaker={showLoudspeaker}
-                  ></AssistantGroupButton>
-                )
+                <AssistantGroupButton
+                  messageId={item.id}
+                  content={item.content}
+                  prompt={item.prompt}
+                  showLikeButton={showLikeButton}
+                  audioBinary={item.audio_binary}
+                  showLoudspeaker={showLoudspeaker}
+                ></AssistantGroupButton>
               ) : (
                 <UserGroupButton
                   content={item.content}
