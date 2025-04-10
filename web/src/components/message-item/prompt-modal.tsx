@@ -17,6 +17,8 @@ const PromptModal = ({
           Prompt
         </Space>
       }
+      style={{ maxHeight: '80%', overflowY: 'auto' }}
+      centered
       width={'80%'}
       open={visible}
       onCancel={hideModal}

@@ -41,6 +41,15 @@ const HightLightMarkdown = ({
               </code>
             );
           },
+          img: (props: any) => {
+            // 使用内联样式来限制图片大小
+            const imgStyle = {
+              maxWidth: '90%',
+              minWidth: '100px',
+              height: 'auto',
+            };
+            return <img {...props} style={imgStyle} />;
+          },
         } as any
       }
     >
