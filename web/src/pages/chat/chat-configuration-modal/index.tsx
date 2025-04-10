@@ -144,6 +144,7 @@ const ChatConfigurationModal = ({
 
   return (
     <Modal
+      className={styles.chartModel}
       title={title}
       width={688}
       open={visible}
