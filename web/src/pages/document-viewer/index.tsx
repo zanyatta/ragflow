@@ -1,11 +1,12 @@
 import { Images } from '@/constants/common';
 import { api_host } from '@/utils/api';
-import { Flex } from 'antd';
+import { Flex, Image } from 'antd';
 import { useParams, useSearchParams } from 'umi';
 import Docx from './docx';
 import Excel from './excel';
-import Image from './image';
+import Markdown from './markdown';
 import Pdf from './pdf';
+import Txt from './txt';
 
 import { previewHtmlFile } from '@/utils/file-util';
 import styles from './index.less';
@@ -23,7 +24,6 @@ const DocumentViewer = () => {
     previewHtmlFile(documentId);
     return;
   }
-
   return (
     <section className={styles.viewerWrapper}>
       {Images.includes(ext!) && (
@@ -32,9 +32,10 @@ const DocumentViewer = () => {
         </Flex>
       )}
       {ext === 'pdf' && <Pdf url={api}></Pdf>}
+      {ext === 'md' && <Markdown url={api}></Markdown>}
       {(ext === 'xlsx' || ext === 'xls') && <Excel filePath={api}></Excel>}
-
       {ext === 'docx' && <Docx filePath={api}></Docx>}
+      {ext === 'txt' && <Txt url={api}></Txt>}
     </section>
   );
 };
