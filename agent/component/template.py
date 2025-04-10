@@ -45,6 +45,7 @@ class Template(ComponentBase):
     def get_input_elements(self):
         key_set = set([])
         res = []
+        # 使用正则表达式查找模板内容中的输入元素，并遍历处理
         for r in re.finditer(r"\{([a-z]+[:@][a-z0-9_-]+)\}", self._param.content, flags=re.IGNORECASE):
             cpn_id = r.group(1)
             if cpn_id in key_set:
@@ -65,11 +66,13 @@ class Template(ComponentBase):
         return res
 
     def _run(self, history, **kwargs):
-        content = self._param.content
+        content = self._param.content  # 获取模板内容
 
         self._param.inputs = []
+        # 遍历输入组件
         for para in self.get_input_elements():
             if para["key"].lower().find("begin@") == 0:
+                # 处理以"begin@"开头的参数
                 cpn_id, key = para["key"].split("@")
                 for p in self._canvas.get_component(cpn_id)["obj"]._param.query:
                     if p["key"] == key:
@@ -83,6 +86,7 @@ class Template(ComponentBase):
             component_id = para["key"]
             cpn = self._canvas.get_component(component_id)["obj"]
             if cpn.component_name.lower() == "answer":
+                # 处理ai回答组件，获取最新消息
                 hist = self._canvas.get_history(1)
                 if hist:
                     hist = hist[0]["content"]
@@ -92,34 +96,41 @@ class Template(ComponentBase):
                 continue
 
             _, out = cpn.output(allow_partial=False)
+            # print('组件输出out', out, '\nout.columns:', out.columns)
 
             result = ""
             if "content" in out.columns:
                 result = "\n".join(
-                    [o if isinstance(o, str) else str(o) for o in out["content"]]
+                    [o if isinstance(o, str) else str(o) for o in out["content"]]  # 将输出内容转换为字符串
                 )
 
             self.make_kwargs(para, kwargs, result)
 
-        template = Jinja2Template(content)
+        # print('遍历结束，kwargs:', kwargs, '\n---kwargs end---')
 
-        try:
-            content = template.render(kwargs)
-        except Exception:
-            pass
-
+        # 占位符替换
         for n, v in kwargs.items():
             if not isinstance(v, str):
                 try:
-                    v = json.dumps(v, ensure_ascii=False)
+                    v = json.dumps(v, ensure_ascii=False)  # 将非字符串值转换为JSON格式
                 except Exception:
                     pass
             content = re.sub(
-                r"\{%s\}" % re.escape(n), v, content
+                r"\{%s\}" % re.escape(n), v, content  # 替换模板中的占位符
             )
             content = re.sub(
-                r"(#+)", r" \1 ", content
+                r"(#+)", r" \1 ", content  # 处理井号
             )
+            # print('替换后content:', content)
+
+        template = Jinja2Template(content)
+
+        # 渲染模板
+        try:
+            content = template.render(kwargs)
+            # print('渲染结果content:', content, '渲染结束')
+        except Exception:
+            pass
 
         return Template.be_output(content)
 
@@ -131,4 +142,5 @@ class Template(ComponentBase):
             value = json.loads(value)
         except Exception:
             pass
+        # 组件ID作为键保留用于后续的字符串替换
         kwargs[para["key"]] = value
