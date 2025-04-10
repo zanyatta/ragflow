@@ -102,7 +102,7 @@ const MessageInput = ({
   const { data: documentInfos, setDocumentIds } = useFetchDocumentInfosByIds();
   const { uploadAndParseDocument } = useUploadAndParseDocument(uploadMethod);
   const conversationIdRef = useRef(conversationId);
-
+  const isComposingRef = useRef(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const handlePreview = async (file: UploadFile) => {
@@ -163,6 +163,7 @@ const MessageInput = ({
     async (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
       // check if it was shift + enter
       if (event.key === 'Enter' && event.shiftKey) return;
+      if (event.key === 'Enter' && isComposingRef.current) return;
       if (event.key !== 'Enter') return;
       if (sendDisabled || isUploadingFile || sendLoading) return;
 
@@ -171,6 +172,13 @@ const MessageInput = ({
     },
     [sendDisabled, isUploadingFile, sendLoading, handlePressEnter],
   );
+
+  const handleCompositionStart = () => {
+    isComposingRef.current = true;
+  };
+  const handleCompositionEnd = () => {
+    isComposingRef.current = false;
+  };
 
   const handleRemove = useCallback(
     async (file: UploadFile) => {
@@ -238,6 +246,8 @@ const MessageInput = ({
         autoSize={{ minRows: 2, maxRows: 10 }}
         onKeyDown={handleKeyDown}
         onChange={onInputChange}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
       />
       <Divider style={{ margin: '5px 30px 10px 0px' }} />
       <Flex justify="space-between" align="center">
